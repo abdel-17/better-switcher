@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ApplicationSwitcherView: View {
 	let applications: Applications
-	let onClose: () -> Void
+	weak let panel: NSPanel?
 
 	@State var query = ""
 	@FocusState var queryFocused
@@ -49,14 +49,14 @@ struct ApplicationSwitcherView: View {
 		.glassEffect(.regular, in: .rect)
 	}
 
-	func onSelect() {
+	func onActivated() {
 		query = ""
-		onClose()
+		panel?.close()
 	}
 
 	func onQueryChange(matchingApplications: [NSRunningApplication]) {
 		if matchingApplications.count == 1 && matchingApplications[0].activate() {
-			onSelect()
+			onActivated()
 		}
 	}
 }

@@ -15,14 +15,7 @@ final class ApplicationSwitcherPanel: NSPanel {
 		self.isMovableByWindowBackground = true
 		self.backgroundColor = .clear
 		self.hasShadow = false
-		self.contentView = NSHostingView(
-			rootView: ApplicationSwitcherView(
-				applications: applications,
-				onClose: { [weak self] in
-					self?.close()
-				},
-			)
-		)
+		self.contentView = NSHostingView(rootView: ApplicationSwitcherView(applications: applications, panel: self))
 	}
 
 	override var canBecomeKey: Bool {
