@@ -12,39 +12,39 @@ struct BetterSwitcherApp: App {
 			eventClass: OSType(kEventClassKeyboard),
 			eventKind: OSType(kEventHotKeyPressed),
 		)
-        var eventHandler: OpaquePointer?
-        let installStatus = InstallEventHandler(
-            target,
-            { _, _, userData in
-                let panel = Unmanaged<ApplicationSwitcherPanel>.fromOpaque(userData!).takeUnretainedValue()
-                panel.center()
-                panel.makeKeyAndOrderFront(nil)
-                return noErr
-            },
-            1,
-            &eventType,
-            Unmanaged.passRetained(panel).toOpaque(),
-            &eventHandler
-        )
-        guard installStatus == noErr else {
-            print("failed to install keyboard event handler", installStatus)
-            return
-        }
+		var eventHandler: OpaquePointer?
+		let installStatus = InstallEventHandler(
+			target,
+			{ _, _, userData in
+				let panel = Unmanaged<ApplicationSwitcherPanel>.fromOpaque(userData!).takeUnretainedValue()
+				panel.center()
+				panel.makeKeyAndOrderFront(nil)
+				return noErr
+			},
+			1,
+			&eventType,
+			Unmanaged.passRetained(panel).toOpaque(),
+			&eventHandler,
+		)
+		guard installStatus == noErr else {
+			print("failed to install keyboard event handler", installStatus)
+			return
+		}
 
-        let hotKeyID = EventHotKeyID(signature: 0x42535453, id: 1)
-        var hotKey: OpaquePointer?
-        let registerStatus = RegisterEventHotKey(
-            UInt32(kVK_Tab),
-            UInt32(optionKey),
-            hotKeyID,
-            target,
-            0,
-            &hotKey
-        )
-        guard registerStatus == noErr else {
-            print("failed to register hotkey", registerStatus)
-            return
-        }
+		let hotKeyID = EventHotKeyID(signature: 0x4253_5453, id: 1)
+		var hotKey: OpaquePointer?
+		let registerStatus = RegisterEventHotKey(
+			UInt32(kVK_Tab),
+			UInt32(optionKey),
+			hotKeyID,
+			target,
+			0,
+			&hotKey,
+		)
+		guard registerStatus == noErr else {
+			print("failed to register hotkey", registerStatus)
+			return
+		}
 	}
 
 	var body: some Scene {
