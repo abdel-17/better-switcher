@@ -39,15 +39,13 @@ struct SwitcherView<App: SwitcherApp>: View {
 			ScrollView {
 				VStack(alignment: .leading) {
 					ForEach(results) { result in
-						let name = result.app.localizedName ?? result.app.bundleIdentifier!
-						let icon = result.app.icon ?? NSWorkspace.shared.icon(for: .applicationBundle)
 						HStack {
-							Image(nsImage: icon)
+							Image(nsImage: result.app.icon ?? NSWorkspace.shared.icon(for: .applicationBundle))
 								.resizable()
 								.aspectRatio(contentMode: .fit)
 								.frame(width: 40, height: 40)
 
-							Text(name)
+                            Text(result.name)
 								.font(.system(size: 16, weight: .medium))
 						}
 					}
@@ -63,7 +61,7 @@ struct SwitcherView<App: SwitcherApp>: View {
 
 struct SearchResult<App: SwitcherApp>: Identifiable {
 	let app: App
-	let range: Range<String.Index>?
+    let name: AttributedString
 
 	var id: String {
 		app.bundleIdentifier!
@@ -73,14 +71,15 @@ struct SearchResult<App: SwitcherApp>: Identifiable {
 func search<App: SwitcherApp>(apps: [App], query: String) -> [SearchResult<App>] {
 	var results: [SearchResult<App>] = []
 	for app in apps {
-		let name = app.localizedName ?? app.bundleIdentifier!
-		if query.isEmpty {
-			let result = SearchResult(app: app, range: nil)
-			results.append(result)
-		} else if let range = name.localizedStandardRange(of: query), range.lowerBound == name.startIndex {
-			let result = SearchResult(app: app, range: range)
-			results.append(result)
-		}
+		var name = AttributedString(app.localizedName ?? app.bundleIdentifier!)
+        if !query.isEmpty {
+            let options: String.CompareOptions = [.anchored, .caseInsensitive, .diacriticInsensitive]
+            guard let range = name.range(of: query, options: options) else {
+                continue
+            }
+            name[range].foregroundColor = .red
+        }
+        results.append(SearchResult(app: app, name: name))
 	}
 	return results
 }
