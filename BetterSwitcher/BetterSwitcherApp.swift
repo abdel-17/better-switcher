@@ -1,49 +1,26 @@
-import AppKit
 import Carbon
 import SwiftUI
 
 @main
 struct BetterSwitcherApp: App {
-	let panel = ApplicationSwitcherPanel(applications: Applications())
+	private let panel = SwitcherPanel()
+	private let hotKey = HotKey()
 
 	init() {
-		let target = GetApplicationEventTarget()
-		var eventType = EventTypeSpec(
-			eventClass: OSType(kEventClassKeyboard),
-			eventKind: OSType(kEventHotKeyPressed),
-		)
-		var eventHandler: OpaquePointer?
-		let installStatus = InstallEventHandler(
-			target,
-			{ _, _, userData in
-				let panel = Unmanaged<ApplicationSwitcherPanel>.fromOpaque(userData!).takeUnretainedValue()
-				panel.center()
-				panel.makeKeyAndOrderFront(nil)
-				return noErr
-			},
-			1,
-			&eventType,
-			Unmanaged.passRetained(panel).toOpaque(),
-			&eventHandler,
-		)
-		guard installStatus == noErr else {
-			print("failed to install keyboard event handler", installStatus)
-			return
+		let userData = Unmanaged.passUnretained(panel).toOpaque()
+		let handlerStatus = hotKey.setHandler(userData: userData) { _, _, userData in
+			let panel = Unmanaged<SwitcherPanel>.fromOpaque(userData!).takeUnretainedValue()
+			panel.center()
+			panel.makeKeyAndOrderFront(nil)
+			return noErr
 		}
-
-		let hotKeyID = EventHotKeyID(signature: 0x4253_5453, id: 1)
-		var hotKey: OpaquePointer?
-		let registerStatus = RegisterEventHotKey(
-			UInt32(kVK_Tab),
-			UInt32(optionKey),
-			hotKeyID,
-			target,
-			0,
-			&hotKey,
-		)
-		guard registerStatus == noErr else {
-			print("failed to register hotkey", registerStatus)
-			return
+		if handlerStatus == noErr {
+			let keyStatus = hotKey.setKey(code: kVK_Tab, modifiers: optionKey)
+			if keyStatus != noErr {
+				print("failed to set key", keyStatus)
+			}
+		} else {
+			print("failed to set handler", handlerStatus)
 		}
 	}
 

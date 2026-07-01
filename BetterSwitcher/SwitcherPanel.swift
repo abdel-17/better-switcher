@@ -1,8 +1,8 @@
 import AppKit
 import SwiftUI
 
-final class ApplicationSwitcherPanel: NSPanel {
-	init(applications: Applications) {
+final class SwitcherPanel: NSPanel {
+	init() {
 		super.init(
 			contentRect: NSRect(x: 0, y: 0, width: 500, height: 400),
 			styleMask: [.nonactivatingPanel],
@@ -15,7 +15,7 @@ final class ApplicationSwitcherPanel: NSPanel {
 		self.isMovableByWindowBackground = true
 		self.backgroundColor = .clear
 		self.hasShadow = false
-		self.contentView = NSHostingView(rootView: ApplicationSwitcherView(applications: applications, panel: self))
+		self.contentView = NSHostingView(rootView: SwitcherPanelRootView(panel: self))
 	}
 
 	override var canBecomeKey: Bool {
@@ -29,5 +29,21 @@ final class ApplicationSwitcherPanel: NSPanel {
 	override func resignKey() {
 		super.resignKey()
 		close()
+	}
+}
+
+struct SwitcherPanelRootView: View {
+	weak let panel: SwitcherPanel?
+
+	private let state = SwitcherState()
+	@State private var query = ""
+
+	var body: some View {
+		SwitcherView(apps: state.apps, query: $query) { app in
+			if app.activate() {
+				query = ""
+				panel?.close()
+			}
+		}
 	}
 }
