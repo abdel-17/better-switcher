@@ -14,7 +14,6 @@ final class SwitcherPanel: NSPanel {
 		self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 		self.isMovableByWindowBackground = true
 		self.backgroundColor = .clear
-		self.hasShadow = false
 		self.contentView = NSHostingView(rootView: SwitcherPanelRootView(panel: self))
 	}
 

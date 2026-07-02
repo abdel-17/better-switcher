@@ -73,7 +73,7 @@ struct SearchResult<App: SwitcherApp>: Identifiable {
 func search<App: SwitcherApp>(items: [SwitcherItem<App>], query: String) -> [SearchResult<App>] {
 	var results: [SearchResult<App>] = []
 	for item in items {
-        var name = AttributedString(item.app.localizedName ?? item.app.bundleIdentifier!)
+		var name = AttributedString(item.app.localizedName ?? item.app.bundleIdentifier!)
 		if !query.isEmpty {
 			let options: String.CompareOptions = [.anchored, .caseInsensitive, .diacriticInsensitive]
 			guard let range = name.range(of: query, options: options) else {
@@ -81,7 +81,7 @@ func search<App: SwitcherApp>(items: [SwitcherItem<App>], query: String) -> [Sea
 			}
 			name[range].foregroundColor = .red
 		}
-        results.append(SearchResult(app: item.app, searchHint: item.searchHint, name: name))
+		results.append(SearchResult(app: item.app, searchHint: item.searchHint, name: name))
 	}
 	return results
 }
