@@ -39,7 +39,7 @@ struct SwitcherPanelRootView: View {
 	@State private var query = ""
 
 	var body: some View {
-		SwitcherView(apps: state.apps, query: $query) { app in
+		SwitcherView(items: state.items, query: $query) { app in
 			if app.activate() {
 				query = ""
 				panel?.close()

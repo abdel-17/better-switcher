@@ -1,23 +1,15 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-protocol SwitcherApp {
-	var bundleIdentifier: String? { get }
-	var icon: NSImage? { get }
-	var localizedName: String? { get }
-}
-
-extension NSRunningApplication: SwitcherApp {}
-
 struct SwitcherView<App: SwitcherApp>: View {
-	let apps: [App]
+	let items: [SwitcherItem<App>]
 	@Binding var query: String
 	let onActivate: (App) -> Void
 
 	@FocusState private var queryFocused
 
 	var body: some View {
-		let results = search(apps: apps, query: query)
+		let results = search(items: items, query: query)
 		VStack(alignment: .leading, spacing: 0) {
 			TextField("Application name", text: $query, prompt: Text(""))
 				.textFieldStyle(.plain)
@@ -45,8 +37,17 @@ struct SwitcherView<App: SwitcherApp>: View {
 								.aspectRatio(contentMode: .fit)
 								.frame(width: 40, height: 40)
 
-                            Text(result.name)
+							Text(result.name)
 								.font(.system(size: 16, weight: .medium))
+
+							Spacer()
+
+							Text(result.searchHint)
+								.font(.system(size: 12).monospaced())
+								.padding(.horizontal, 6)
+								.padding(.vertical, 3)
+								.background(.secondary)
+								.clipShape(RoundedRectangle(cornerRadius: 4))
 						}
 					}
 				}
@@ -61,25 +62,26 @@ struct SwitcherView<App: SwitcherApp>: View {
 
 struct SearchResult<App: SwitcherApp>: Identifiable {
 	let app: App
-    let name: AttributedString
+	let searchHint: Substring
+	let name: AttributedString
 
 	var id: String {
 		app.bundleIdentifier!
 	}
 }
 
-func search<App: SwitcherApp>(apps: [App], query: String) -> [SearchResult<App>] {
+func search<App: SwitcherApp>(items: [SwitcherItem<App>], query: String) -> [SearchResult<App>] {
 	var results: [SearchResult<App>] = []
-	for app in apps {
-		var name = AttributedString(app.localizedName ?? app.bundleIdentifier!)
-        if !query.isEmpty {
-            let options: String.CompareOptions = [.anchored, .caseInsensitive, .diacriticInsensitive]
-            guard let range = name.range(of: query, options: options) else {
-                continue
-            }
-            name[range].foregroundColor = .red
-        }
-        results.append(SearchResult(app: app, name: name))
+	for item in items {
+        var name = AttributedString(item.app.localizedName ?? item.app.bundleIdentifier!)
+		if !query.isEmpty {
+			let options: String.CompareOptions = [.anchored, .caseInsensitive, .diacriticInsensitive]
+			guard let range = name.range(of: query, options: options) else {
+				continue
+			}
+			name[range].foregroundColor = .red
+		}
+        results.append(SearchResult(app: item.app, searchHint: item.searchHint, name: name))
 	}
 	return results
 }
