@@ -50,8 +50,8 @@ struct SwitcherView<App: SwitcherApp>: View {
 					}
 				}
 			}
-			.padding(.horizontal, 12)
-			.padding(.vertical, 6)
+			.padding(.horizontal, results.count > 0 ? 12 : 0)
+			.padding(.vertical, results.count > 0 ? 8 : 0)
 		}
 		.glassEffect(.regular, in: .rect)
 	}
