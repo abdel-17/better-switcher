@@ -1,4 +1,5 @@
 import Carbon
+import ServiceManagement
 import SwiftUI
 
 @main
@@ -21,6 +22,12 @@ struct BetterSwitcherApp: App {
 			}
 		} else {
 			print("failed to set handler", handlerStatus)
+		}
+
+		do {
+            try SMAppService.mainApp.register()
+		} catch {
+			print("failed to register app as a login item", error)
 		}
 	}
 
