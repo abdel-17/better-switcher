@@ -3,11 +3,11 @@ import Observation
 
 @Observable
 final class SwitcherState {
-	private(set) var items: [SwitcherItem<NSRunningApplication>]
+	private(set) var items = getSwitcherItems(apps: getSwitcherApps())
+	var query = ""
 	@ObservationIgnored private var observation: NSKeyValueObservation?
 
 	init() {
-		self.items = getSwitcherItems(apps: getSwitcherApps())
 		self.observation = NSWorkspace.shared.observe(\.runningApplications) { [weak self] _, _ in
 			self?.items = getSwitcherItems(apps: getSwitcherApps())
 		}

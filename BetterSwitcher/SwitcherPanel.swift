@@ -34,13 +34,12 @@ final class SwitcherPanel: NSPanel {
 struct SwitcherPanelRootView: View {
 	weak let panel: SwitcherPanel?
 
-	private let state = SwitcherState()
-	@State private var query = ""
+	@Bindable private var state = SwitcherState()
 
 	var body: some View {
-		SwitcherView(items: state.items, query: $query) { app in
+		SwitcherView(items: state.items, query: $state.query) { app in
 			if app.activate() {
-				query = ""
+				state.query = ""
 				panel?.close()
 			}
 		}

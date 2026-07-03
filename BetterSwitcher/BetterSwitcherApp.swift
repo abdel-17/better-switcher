@@ -34,6 +34,7 @@ struct BetterSwitcherApp: App {
 			Button("Quit") {
 				NSApplication.shared.terminate(nil)
 			}
+			.keyboardShortcut("Q", modifiers: .command)
 		}
 	}
 }
