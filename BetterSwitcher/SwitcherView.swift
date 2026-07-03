@@ -28,33 +28,30 @@ struct SwitcherView<App: SwitcherApp>: View {
 
 			Divider()
 
-			ScrollView {
-				VStack(alignment: .leading) {
-					ForEach(results) { result in
-						HStack {
-							Image(nsImage: result.app.icon ?? NSWorkspace.shared.icon(for: .applicationBundle))
-								.resizable()
-								.aspectRatio(contentMode: .fit)
-								.frame(width: 40, height: 40)
+			VStack(alignment: .leading) {
+				ForEach(results) { result in
+					HStack {
+						Image(nsImage: result.app.icon ?? NSWorkspace.shared.icon(for: .applicationBundle))
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 40, height: 40)
 
-							Text(result.name)
-								.font(.system(size: 16, weight: .medium))
+						Text(result.name)
+							.font(.system(size: 16, weight: .medium))
 
-							Spacer()
+						Spacer()
 
-							Text(result.searchHint)
-								.font(.system(size: 12).monospaced())
-								.padding(.horizontal, 6)
-								.padding(.vertical, 3)
-								.background(.secondary)
-								.clipShape(RoundedRectangle(cornerRadius: 4))
-						}
+						Text(result.searchHint)
+							.font(.system(size: 12).monospaced())
+							.padding(.horizontal, 6)
+							.padding(.vertical, 3)
+							.background(.secondary)
+							.clipShape(RoundedRectangle(cornerRadius: 4))
 					}
 				}
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.padding(.horizontal, 12)
-				.padding(.vertical, 6)
 			}
+			.padding(.horizontal, 12)
+			.padding(.vertical, 6)
 		}
 		.glassEffect(.regular, in: .rect)
 	}

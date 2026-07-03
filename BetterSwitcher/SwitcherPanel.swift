@@ -4,7 +4,7 @@ import SwiftUI
 final class SwitcherPanel: NSPanel {
 	init() {
 		super.init(
-			contentRect: NSRect(x: 0, y: 0, width: 500, height: 400),
+			contentRect: NSRect(x: 0, y: 0, width: 400, height: 0),
 			styleMask: [.nonactivatingPanel],
 			backing: .buffered,
 			defer: true,

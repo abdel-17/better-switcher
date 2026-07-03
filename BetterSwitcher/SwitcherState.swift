@@ -18,7 +18,7 @@ final class SwitcherState {
 	}
 }
 
-private func getSwitcherApps() -> [NSRunningApplication] {
+func getSwitcherApps() -> [NSRunningApplication] {
 	return NSWorkspace.shared.runningApplications
 		.filter { app in
 			app.activationPolicy == .regular && app.bundleIdentifier != nil
@@ -28,7 +28,6 @@ private func getSwitcherApps() -> [NSRunningApplication] {
 			let y = b.localizedName ?? b.bundleIdentifier!
 			return x.localizedStandardCompare(y) == .orderedAscending
 		}
-
 }
 
 protocol SwitcherApp {
