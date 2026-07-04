@@ -35,6 +35,7 @@ struct SettingsView: View {
 			}
 		}
 		.formStyle(.grouped)
+        .scenePadding(.vertical)
 		.frame(width: 350)
 		.fixedSize()
 		.onChange(of: appearsActive) {
