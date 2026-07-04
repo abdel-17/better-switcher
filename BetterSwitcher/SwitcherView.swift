@@ -6,8 +6,6 @@ struct SwitcherView<App: SwitcherApp>: View {
 	@Binding var query: String
 	let onActivate: (App) -> Void
 
-	@FocusState private var queryFocused
-
 	var body: some View {
 		let results = search(items: items, query: query)
 		VStack(alignment: .leading, spacing: 0) {
@@ -16,10 +14,6 @@ struct SwitcherView<App: SwitcherApp>: View {
 				.font(.system(size: 14))
 				.padding(.horizontal, 16)
 				.padding(.vertical, 10)
-				.focused($queryFocused)
-				.onAppear {
-					queryFocused = true
-				}
 				.onChange(of: query) {
 					if results.count == 1 {
 						onActivate(results[0].app)
