@@ -61,7 +61,7 @@ func getSwitcherItems<App: SwitcherApp>(apps: [App]) -> [SwitcherItem<App>] {
 			hint = potentialHint
 			break
 		}
-		hint.replace(" ", with: "\u{2423}")
+		hint.replace(" ", with: "⎵")
 		items.append(SwitcherItem(app: apps[i], searchHint: hint))
 	}
 	return items

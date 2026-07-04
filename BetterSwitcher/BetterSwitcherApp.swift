@@ -6,6 +6,9 @@ import SwiftUI
 struct BetterSwitcherApp: App {
 	private let panel = SwitcherPanel()
 	private let hotKey = HotKey()
+	@AppStorage("shortcutCode") private var shortcutCode = kVK_Tab
+	@AppStorage("shortcutModifiers") private var shortcutModifiers = optionKey
+	@State private var isLoginItem = SMAppService.mainApp.status == .enabled
 
 	init() {
 		let userData = Unmanaged.passUnretained(panel).toOpaque()
@@ -16,18 +19,12 @@ struct BetterSwitcherApp: App {
 			return noErr
 		}
 		if handlerStatus == noErr {
-			let keyStatus = hotKey.setKey(code: kVK_Tab, modifiers: optionKey)
+			let keyStatus = hotKey.setKey(code: shortcutCode, modifiers: shortcutModifiers)
 			if keyStatus != noErr {
 				print("failed to set key", keyStatus)
 			}
 		} else {
 			print("failed to set handler", handlerStatus)
-		}
-
-		do {
-            try SMAppService.mainApp.register()
-		} catch {
-			print("failed to register app as a login item", error)
 		}
 	}
 
@@ -38,10 +35,49 @@ struct BetterSwitcherApp: App {
 				panel.makeKeyAndOrderFront(nil)
 			}
 
+			SettingsLink()
+				.keyboardShortcut(",", modifiers: .command)
+
 			Button("Quit") {
-				NSApplication.shared.terminate(nil)
+				NSApp.terminate(nil)
 			}
 			.keyboardShortcut("Q", modifiers: .command)
+		}
+
+		Settings {
+			SettingsView(
+				shortcutCode: shortcutCode,
+				shortcutModifiers: shortcutModifiers,
+				onShortcutChange: onShortcutChange,
+				isLoginItem: $isLoginItem,
+			)
+			.onChange(of: isLoginItem, onIsLoginItemChange)
+		}
+	}
+
+	private func onShortcutChange(code: Int, modifiers: Int) {
+		let keyStatus = hotKey.setKey(code: code, modifiers: modifiers)
+		if keyStatus == noErr {
+			shortcutCode = code
+			shortcutModifiers = modifiers
+		} else {
+			print("failed to set key", keyStatus)
+		}
+	}
+
+	private func onIsLoginItemChange() {
+		if isLoginItem {
+			do {
+				try SMAppService.mainApp.register()
+			} catch {
+				print("failed to register app as a login item", error)
+			}
+		} else {
+			do {
+				try SMAppService.mainApp.unregister()
+			} catch {
+				print("failed to unregister app as a login item", error)
+			}
 		}
 	}
 }
