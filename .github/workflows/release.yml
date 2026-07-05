@@ -21,7 +21,8 @@ jobs:
             -project BetterSwitcher.xcodeproj \
             -scheme BetterSwitcher \
             -configuration Release \
-            -derivedDataPath build
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-"
 
       - name: Create zip archive
         run: |
